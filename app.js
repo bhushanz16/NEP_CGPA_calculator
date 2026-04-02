@@ -51,11 +51,47 @@ const calculateSubjectStats = (internalObt, internalMax, theoryObt, theoryMax) =
 // COMPONENTS
 // ============================================
 
-const AdPlaceholder = ({ text }) => (
-    <div className="w-full h-24 bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-300 flex items-center justify-center text-gray-400 rounded-2xl my-6 overflow-hidden shadow-inner opacity-80 hover:opacity-100 transition-opacity" data-html2canvas-ignore>
-        <div className="flex flex-col items-center gap-1">
-            <Icon name="Megaphone" size={20} className="text-gray-400" />
-            <span className="text-sm font-medium tracking-wide">{text} (Ad Block)</span>
+const AdsterraAd = ({ adKey, width, height }) => {
+    const adRef = React.useRef(null);
+
+    useEffect(() => {
+        if (!adRef.current) return;
+        adRef.current.innerHTML = ''; // Clear previous injection
+        
+        // Define options for Adsterra
+        const conf = document.createElement('script');
+        conf.type = 'text/javascript';
+        conf.innerHTML = `atOptions = {
+            'key' : '${adKey}',
+            'format' : 'iframe',
+            'height' : ${height},
+            'width' : ${width},
+            'params' : {}
+        };`;
+        
+        // Load Adsterra Engine
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
+        
+        adRef.current.appendChild(conf);
+        adRef.current.appendChild(script);
+    }, [adKey, width, height]);
+
+    return (
+        <div ref={adRef} className="flex justify-center items-center overflow-hidden" style={{ width: width, minHeight: height }}></div>
+    );
+};
+
+// Intelligently load the 728x90 banner on Desktop, and 320x50 on Mobile
+const SmartAdBanner = () => (
+    <div className="w-full flex justify-center my-6 overflow-hidden max-w-full" data-html2canvas-ignore>
+        <div className="hidden sm:block">
+            <AdsterraAd adKey="cc67873bee65a46d0bd7e7530c61817d" width={728} height={90} />
+        </div>
+        <div className="block sm:hidden flex-1 overflow-hidden flex justify-center">
+            <AdsterraAd adKey="bf0926d09cfa30bbcc3eb0cf28832a29" width={320} height={50} />
         </div>
     </div>
 );
@@ -248,7 +284,13 @@ const App = () => {
     };
 
     return (
-        <div className="min-h-screen pb-32">
+        <div className="min-h-screen pb-32 relative">
+            
+            {/* Side Skyscraper Ad (Desktop Only) */}
+            <div className="hidden xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-10 opacity-90 hover:opacity-100 transition-opacity" data-html2canvas-ignore>
+                <AdsterraAd adKey="155ddc7d0dadb61f6dbd90695102380f" width={160} height={600} />
+            </div>
+
             {/* Header - Glassmorphic */}
             <header className="glass-header sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
                 <div className="flex items-center gap-3">
@@ -273,7 +315,7 @@ const App = () => {
                         <p className="text-gray-500">Enter your internal and theory marks to dynamically calculate points.</p>
                     </div>
 
-                    <AdPlaceholder text="Top Banner Advertisement" />
+                    <SmartAdBanner />
 
                     <div className="glass-panel p-6 mb-8 rounded-[24px] shadow-sm transform transition-all focus-within:shadow-md focus-within:-translate-y-1">
                         <div className="flex justify-between flex-wrap gap-4 mb-4">
@@ -333,7 +375,7 @@ const App = () => {
                         Add Subject
                     </button>
 
-                    <AdPlaceholder text="Bottom Banner Advertisement" />
+                    <SmartAdBanner />
 
                     {/* Sticky Action / Result Banner */}
                     <div className="sticky bottom-6 mt-8 z-40 transition-all duration-500 animate-fade-in-up" style={{animationDelay: '300ms'}}>
