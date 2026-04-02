@@ -264,11 +264,6 @@ const App = () => {
 
     return (
         <div className="min-h-screen pb-32 relative">
-            
-            {/* Side Skyscraper Ad (Desktop Only) */}
-            <div className="hidden xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-10 opacity-90 hover:opacity-100 transition-opacity" data-html2canvas-ignore>
-                <AdsterraAd type="sidebar" width={160} height={600} />
-            </div>
 
             {/* Header - Glassmorphic */}
             <header className="glass-header sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
@@ -355,6 +350,11 @@ const App = () => {
                     </button>
 
                     <SmartAdBanner />
+
+                    {/* Skyscraper ad placed at the bottom as requested */}
+                    <div className="w-full flex justify-center my-6 overflow-hidden max-w-full" data-html2canvas-ignore>
+                        <AdsterraAd type="sidebar" width={160} height={600} />
+                    </div>
 
                     {/* Sticky Action / Result Banner */}
                     <div className="sticky bottom-6 mt-8 z-40 transition-all duration-500 animate-fade-in-up" style={{animationDelay: '300ms'}}>
