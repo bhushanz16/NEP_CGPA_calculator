@@ -51,36 +51,15 @@ const calculateSubjectStats = (internalObt, internalMax, theoryObt, theoryMax) =
 // COMPONENTS
 // ============================================
 
-const AdsterraAd = ({ adKey, width, height }) => {
-    const adRef = React.useRef(null);
-
-    useEffect(() => {
-        if (!adRef.current) return;
-        adRef.current.innerHTML = ''; // Clear previous injection
-        
-        // Define options for Adsterra
-        const conf = document.createElement('script');
-        conf.type = 'text/javascript';
-        conf.innerHTML = `atOptions = {
-            'key' : '${adKey}',
-            'format' : 'iframe',
-            'height' : ${height},
-            'width' : ${width},
-            'params' : {}
-        };`;
-        
-        // Load Adsterra Engine
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.async = true;
-        script.src = `https://www.highperformanceformat.com/${adKey}/invoke.js`;
-        
-        adRef.current.appendChild(conf);
-        adRef.current.appendChild(script);
-    }, [adKey, width, height]);
-
+const AdsterraAd = ({ type, width, height }) => {
     return (
-        <div ref={adRef} className="flex justify-center items-center overflow-hidden" style={{ width: width, minHeight: height }}></div>
+        <iframe 
+            src={`${type}-ad.html`} 
+            width={width} 
+            height={height} 
+            style={{ border: 'none', overflow: 'hidden', display: 'block' }}
+            scrolling="no"
+        />
     );
 };
 
@@ -88,10 +67,10 @@ const AdsterraAd = ({ adKey, width, height }) => {
 const SmartAdBanner = () => (
     <div className="w-full flex justify-center my-6 overflow-hidden max-w-full" data-html2canvas-ignore>
         <div className="hidden sm:block">
-            <AdsterraAd adKey="cc67873bee65a46d0bd7e7530c61817d" width={728} height={90} />
+            <AdsterraAd type="desktop" width={728} height={90} />
         </div>
         <div className="block sm:hidden flex-1 overflow-hidden flex justify-center">
-            <AdsterraAd adKey="bf0926d09cfa30bbcc3eb0cf28832a29" width={320} height={50} />
+            <AdsterraAd type="mobile" width={320} height={50} />
         </div>
     </div>
 );
@@ -288,7 +267,7 @@ const App = () => {
             
             {/* Side Skyscraper Ad (Desktop Only) */}
             <div className="hidden xl:flex fixed right-6 top-1/2 -translate-y-1/2 z-10 opacity-90 hover:opacity-100 transition-opacity" data-html2canvas-ignore>
-                <AdsterraAd adKey="155ddc7d0dadb61f6dbd90695102380f" width={160} height={600} />
+                <AdsterraAd type="sidebar" width={160} height={600} />
             </div>
 
             {/* Header - Glassmorphic */}
