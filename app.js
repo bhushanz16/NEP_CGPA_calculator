@@ -159,6 +159,7 @@ const App = () => {
     const [semesterName, setSemesterName] = useState("");
     const [studentName, setStudentName] = useState("");
     const [rollNumber, setRollNumber] = useState("");
+    const [showWarning, setShowWarning] = useState(false);
 
     const defaultSubject = () => ({ id: Date.now() + Math.random(), name: '', internalObt: '', internalMax: 20, theoryObt: '', theoryMax: 30 });
     const [subjects, setSubjects] = useState(Array.from({length: 5}, defaultSubject));
@@ -262,7 +263,7 @@ const App = () => {
                           (ua.match(/iPhone|iPod|iPad/i) && !ua.match(/Safari/i));
                                
         if (isWebView) {
-            alert("⚠️ You are inside an app's browser (like Telegram) which blocks PDF downloads.\n\nPlease tap the Three Dots (⋮) in the top corner and select 'Open in Chrome' or 'Open in System Browser' to download your PDF!");
+            setShowWarning(true);
         }
 
         doc.save(`${studentName || 'student'}-${semesterName || 'result'}.pdf`);
@@ -288,6 +289,27 @@ const App = () => {
             </header>
 
             <main className="max-w-[720px] mx-auto p-4 sm:p-6 mt-4">
+                
+                {showWarning && (
+                    <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-xl relative shadow-sm animate-fade-in-up" data-html2canvas-ignore>
+                        <button onClick={() => setShowWarning(false)} className="absolute top-2 right-2 text-red-400 hover:text-red-700 p-1">
+                            <Icon name="X" size={16} />
+                        </button>
+                        <div className="flex items-start gap-4">
+                            <div className="bg-red-100 p-2 rounded-full hidden sm:block">
+                                <Icon name="AlertTriangle" size={24} className="text-red-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-red-800 font-bold text-lg mb-1">Downloads Blocked Here!</h3>
+                                <p className="text-red-600 text-sm mb-3">You are using an App's built-in browser (like Telegram) which strictly blocks PDF downloads. Your PDF cannot be saved here.</p>
+                                <div className="text-red-800 text-sm font-semibold bg-white border border-red-200 shadow-sm p-3 rounded-lg inline-block">
+                                    👉 Tap the <strong className="font-black text-xl">⋮</strong> (Three Dots) in the top right corner and select<br/> <span className="text-blue-600">"Open in Chrome"</span> or <span className="text-blue-600">"Open in System Browser"</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 <div className="animate-fade-in-up">
                     
                     <div className="mb-8 text-center sm:text-left">
