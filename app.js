@@ -258,13 +258,11 @@ const App = () => {
 
         // Detect in-app browsers like Telegram, Instagram, Facebook which block blob downloads
         const ua = navigator.userAgent || navigator.vendor || window.opera;
-        const isInAppBrowser = (ua.indexOf("FBAN") > -1) || 
-                               (ua.indexOf("FBAV") > -1) || 
-                               (ua.indexOf("Instagram") > -1) || 
-                               (ua.indexOf("Telegram") > -1);
+        const isWebView = /(WebView|wv(?!.*Edge)|Telegram|Instagram|FBAN|FBAV|Line|WhatsApp)/i.test(ua) || 
+                          (ua.match(/iPhone|iPod|iPad/i) && !ua.match(/Safari/i));
                                
-        if (isInAppBrowser) {
-            alert("⚠️ You are inside an app's browser (like Telegram/Instagram) which blocks PDF downloads.\n\nPlease tap the Three Dots (⋮) in the top corner and select 'Open in Chrome' or 'Open in System Browser' to download your PDF!");
+        if (isWebView) {
+            alert("⚠️ You are inside an app's browser (like Telegram) which blocks PDF downloads.\n\nPlease tap the Three Dots (⋮) in the top corner and select 'Open in Chrome' or 'Open in System Browser' to download your PDF!");
         }
 
         doc.save(`${studentName || 'student'}-${semesterName || 'result'}.pdf`);
