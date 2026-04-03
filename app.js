@@ -51,33 +51,22 @@ const calculateSubjectStats = (internalObt, internalMax, theoryObt, theoryMax) =
 // COMPONENTS
 // ============================================
 
-const AdsterraAd = ({ type, width, height }) => {
-    return (
-        <iframe 
-            src={`${type}-ad.html`} 
-            width={width} 
-            height={height} 
-            style={{ border: 'none', overflow: 'hidden', display: 'block' }}
-            scrolling="no"
-        />
-    );
-};
-
-// Intelligently load the 728x90 banner on Desktop, and 320x50 on Mobile
-const SmartAdBanner = () => (
-    <div className="w-full flex justify-center my-6 overflow-hidden max-w-full" data-html2canvas-ignore>
-        <div className="hidden sm:block">
-            <AdsterraAd type="desktop" width={728} height={90} />
-        </div>
-        <div className="block sm:hidden flex-1 overflow-hidden flex justify-center">
-            <AdsterraAd type="mobile" width={320} height={50} />
-        </div>
-    </div>
-);
+// COMPONENTS
+// ============================================
 
 const SubjectCard = ({ subject, updateSubject, removeSubject, index }) => {
     const handleChange = (field, value) => {
-        updateSubject(subject.id, { ...subject, [field]: value });
+        let val = value;
+        if (val !== '') {
+            if (field === 'internalObt') {
+                if (Number(val) > Number(subject.internalMax)) val = subject.internalMax.toString();
+                if (Number(val) < 0) val = '0';
+            } else if (field === 'theoryObt') {
+                if (Number(val) > Number(subject.theoryMax)) val = subject.theoryMax.toString();
+                if (Number(val) < 0) val = '0';
+            }
+        }
+        updateSubject(subject.id, { ...subject, [field]: val });
     };
 
     const s_stats = calculateSubjectStats(subject.internalObt, subject.internalMax, subject.theoryObt, subject.theoryMax);
@@ -171,8 +160,13 @@ const App = () => {
     const [studentName, setStudentName] = useState("");
     const [rollNumber, setRollNumber] = useState("");
 
-    const defaultSubject = () => ({ id: Date.now() + Math.random(), name: '', internalObt: '', internalMax: 20, theoryObt: '', theoryMax: 30 });
-    const [subjects, setSubjects] = useState(Array.from({length: 5}, defaultSubject));
+    const removeSubject = (id) => {
+        if (subjects.length <= 1) {
+            alert("At least 1 subject is compulsory!");
+            return;
+        }
+        setSubjects(subjects.filter(s => s.id !== id));
+    };
 
     const clearForm = () => {
         if (confirm("Are you sure you want to clear all data?")) {
@@ -289,8 +283,6 @@ const App = () => {
                         <p className="text-gray-500">Enter your internal and theory marks to dynamically calculate points.</p>
                     </div>
 
-                    <SmartAdBanner />
-
                     <div className="glass-panel p-6 mb-8 rounded-[24px] shadow-sm transform transition-all focus-within:shadow-md focus-within:-translate-y-1">
                         <div className="flex justify-between flex-wrap gap-4 mb-4">
                             <div className="flex-1 min-w-[200px]">
@@ -333,7 +325,7 @@ const App = () => {
                                 index={i}
                                 subject={sub} 
                                 updateSubject={(id, data) => setSubjects(subjects.map(s => s.id === id ? data : s))}
-                                removeSubject={(id) => setSubjects(subjects.filter(s => s.id !== id))}
+                                removeSubject={removeSubject}
                             />
                         ))}
                     </div>
@@ -348,13 +340,6 @@ const App = () => {
                         </div>
                         Add Subject
                     </button>
-
-                    <SmartAdBanner />
-
-                    {/* Skyscraper ad placed at the bottom as requested */}
-                    <div className="w-full flex justify-center my-6 overflow-hidden max-w-full" data-html2canvas-ignore>
-                        <AdsterraAd type="sidebar" width={160} height={600} />
-                    </div>
 
                     {/* Sticky Action / Result Banner */}
                     <div className="sticky bottom-6 mt-8 z-40 transition-all duration-500 animate-fade-in-up" style={{animationDelay: '300ms'}}>
