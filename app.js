@@ -160,6 +160,9 @@ const App = () => {
     const [studentName, setStudentName] = useState("");
     const [rollNumber, setRollNumber] = useState("");
 
+    const defaultSubject = () => ({ id: Date.now() + Math.random(), name: '', internalObt: '', internalMax: 20, theoryObt: '', theoryMax: 30 });
+    const [subjects, setSubjects] = useState(Array.from({length: 5}, defaultSubject));
+
     const removeSubject = (id) => {
         if (subjects.length <= 1) {
             alert("At least 1 subject is compulsory!");
